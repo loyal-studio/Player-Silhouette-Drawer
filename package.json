@@ -1,0 +1,18 @@
+{
+  "name": "com.loyalstudio.player-silhouette-drawer",
+  "version": "0.1.0",
+  "displayName": "Player Silhouette Drawer",
+  "description": "Human-scale reference tool for level design, inspired by Hammer Editor.",
+  "unity": "2021.3",
+  "author": {
+    "name": "LOYAL Studio",
+    "url": "https://github.com/loyal-studio"
+  },
+  "category": "Editor Extensions",
+  "keywords": [
+    "utility",
+    "editor",
+    "gizmos",
+    "leveldesign"
+  ]
+}
