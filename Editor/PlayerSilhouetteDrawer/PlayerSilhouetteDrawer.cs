@@ -13,12 +13,7 @@ namespace Daisen.Editor
         private static readonly List<PlayerSilhouetteTarget> s_Targets = new List<PlayerSilhouetteTarget>();
         
         private static IPlayerSilhouetteReader[] s_Readers;
-        
-        private static readonly IPlayerSilhouetteModule[] s_Modules = new IPlayerSilhouetteModule[]
-        {
-            new StandingSilhouetteModule(),
-            new CrouchingSilhouetteModule()
-        };
+        private static IPlayerSilhouetteModule[] s_Modules;
 
         [InitializeOnLoadMethod]
         private static void RegisterCallbacks()
@@ -34,28 +29,35 @@ namespace Daisen.Editor
             s_HierarchyDirty = true;
         }
 
-        private static void EnsureReadersInitialized()
+        private static void EnsureSystemsInitialized()
         {
-            if (s_Readers != null) return;
-            
-            var readerList = new List<IPlayerSilhouetteReader>();
-            var types = TypeCache.GetTypesDerivedFrom<IPlayerSilhouetteReader>();
-            
-            foreach (var type in types)
+            if (s_Readers == null)
             {
-                if (type.IsAbstract || type.IsInterface) continue;
-                readerList.Add((IPlayerSilhouetteReader)System.Activator.CreateInstance(type));
+                var readerList = new List<IPlayerSilhouetteReader>();
+                foreach (var type in TypeCache.GetTypesDerivedFrom<IPlayerSilhouetteReader>())
+                {
+                    if (type.IsAbstract || type.IsInterface) continue;
+                    readerList.Add((IPlayerSilhouetteReader)System.Activator.CreateInstance(type));
+                }
+                s_Readers = readerList.ToArray();
             }
-            
-            s_Readers = readerList.ToArray();
+
+            if (s_Modules == null)
+            {
+                var moduleList = new List<IPlayerSilhouetteModule>();
+                foreach (var type in TypeCache.GetTypesDerivedFrom<IPlayerSilhouetteModule>())
+                {
+                    if (type.IsAbstract || type.IsInterface) continue;
+                    moduleList.Add((IPlayerSilhouetteModule)System.Activator.CreateInstance(type));
+                }
+                s_Modules = moduleList.ToArray();
+            }
         }
 
         private static void UpdateCacheIfNecessary()
         {
             if (!s_HierarchyDirty) return;
             s_HierarchyDirty = false;
-            
-            EnsureReadersInitialized();
             
             s_RawComponents.Clear();
             for (int i = 0; i < s_Readers.Length; i++)
@@ -87,6 +89,7 @@ namespace Daisen.Editor
             var s = PlayerSilhouetteSettings.Instance;
             if (s == null || !s.showSilhouette) return;
 
+            EnsureSystemsInitialized();
             UpdateCacheIfNecessary();
 
             for (int m = 0; m < s_Modules.Length; m++)
