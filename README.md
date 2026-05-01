@@ -34,4 +34,4 @@ In the early days of Source Engine's Hammer Editor, the "Green Guy" silhouette w
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
