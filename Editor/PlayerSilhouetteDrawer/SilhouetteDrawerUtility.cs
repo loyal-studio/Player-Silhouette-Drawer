@@ -43,13 +43,13 @@ namespace Daisen.Editor
         }
 
         public static void DrawSilhouette3D(
-            Vector3 feet, Quaternion rot, PlayerSilhouetteSettings s,
+            Vector3 feet, Quaternion rot, 
             float height, Color wireCol,
             float shoulderW, float hipW, float waistW, float headR,
-            bool isCrouch)
+            int edges, float thick,
+            bool fillEnabled, Color fillCol)
         {
-            int edges = Mathf.Clamp(s.edgeCount, 4, 64);
-            float thick = s.wireThickness;
+            edges = Mathf.Clamp(edges, 4, 64);
             int ringCount = k_BodyRingDef.Length;
 
             for (int i = 0; i < ringCount; i++)
@@ -85,19 +85,8 @@ namespace Daisen.Editor
             float headBottomY = k_BodyRingDef[^1].ny * height;
             Vector3 headCenter = feet + rot * new Vector3(0f, headBottomY + headR * 1.1f, 0f);
 
-            if (s.fillEnabled)
+            if (fillEnabled)
             {
-                Color fillCol;
-                if (s.useSeparateFillColors)
-                {
-                    fillCol = isCrouch ? s.fillCrouchColor : s.fillStandingColor;
-                }
-                else
-                {
-                    fillCol = isCrouch ? s.crouchColor : s.standingColor;
-                    fillCol.a = s.fillAlpha;
-                }
-                
                 DrawBodyFill(s_RingsCache, edges, fillCol, rot);
                 DrawSphereFilledApprox(headCenter, headR, edges, fillCol, rot);
             }

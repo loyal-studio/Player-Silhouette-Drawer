@@ -35,7 +35,7 @@ namespace Daisen.Editor
                     GameObject = cc.gameObject,
                     FeetPosition = feet,
                     Rotation = rot,
-                    StandingHeight = standH
+                    Height = standH
                 };
                 return true;
             }

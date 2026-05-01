@@ -15,6 +15,15 @@ namespace Daisen.Editor
         private static IPlayerSilhouetteReader[] s_Readers;
         private static IPlayerSilhouetteModule[] s_Modules;
 
+        public static IReadOnlyList<IPlayerSilhouetteModule> Modules
+        {
+            get
+            {
+                EnsureSystemsInitialized();
+                return s_Modules;
+            }
+        }
+
         [InitializeOnLoadMethod]
         private static void RegisterCallbacks()
         {
@@ -86,7 +95,7 @@ namespace Daisen.Editor
         {
             if (Event.current.type != EventType.Repaint) return;
             
-            var s = PlayerSilhouetteSettings.Instance;
+            var s = PlayerSilhouetteSettings.instance;
             if (s == null || !s.showSilhouette) return;
 
             EnsureSystemsInitialized();
