@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
     public sealed class CharacterControllerSilhouetteReader : IPlayerSilhouetteReader
     {

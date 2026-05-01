@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
     internal static class PlayerSilhouetteDrawer
     {

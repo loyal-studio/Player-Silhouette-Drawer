@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
     public sealed class PlayerSilhouetteWindow : EditorWindow
     {

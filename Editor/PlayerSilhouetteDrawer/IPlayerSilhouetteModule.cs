@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
     public interface IPlayerSilhouetteModule
     {

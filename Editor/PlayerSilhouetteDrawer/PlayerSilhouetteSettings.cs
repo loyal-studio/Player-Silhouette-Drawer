@@ -1,11 +1,27 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
-    [FilePath("UserSettings/PlayerSilhouetteSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    public sealed class PlayerSilhouetteSettings : ScriptableSingleton<PlayerSilhouetteSettings>
+    public sealed class PlayerSilhouetteSettings : ScriptableObject
     {
+        private const string PREFS_KEY = "LOYAL.Editor.PlayerSilhouetteSettings";
+
+        private static PlayerSilhouetteSettings s_Instance;
+        public static PlayerSilhouetteSettings instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = CreateInstance<PlayerSilhouetteSettings>();
+                    s_Instance.hideFlags = HideFlags.DontSave;
+                    s_Instance.Load();
+                }
+                return s_Instance;
+            }
+        }
+
         [Header("Visibility")]
         public bool showSilhouette = true;
         public bool showOnlySelected = false;
@@ -36,8 +52,28 @@ namespace Daisen.Editor
             wireThickness = 2.0f;
             fillEnabled = true;
             fillAlpha = 0.18f;
+            Save();
         }
 
-        public void Save() => Save(true);
+        public void Load()
+        {
+            var json = EditorPrefs.GetString(PREFS_KEY, string.Empty);
+            if (!string.IsNullOrEmpty(json))
+            {
+                var oldFlags = hideFlags;
+                hideFlags = HideFlags.None;
+                EditorJsonUtility.FromJsonOverwrite(json, this);
+                hideFlags = oldFlags;
+            }
+        }
+
+        public void Save()
+        {
+            var oldFlags = hideFlags;
+            hideFlags = HideFlags.None;
+            var json = EditorJsonUtility.ToJson(this);
+            hideFlags = oldFlags;
+            EditorPrefs.SetString(PREFS_KEY, json);
+        }
     }
 }

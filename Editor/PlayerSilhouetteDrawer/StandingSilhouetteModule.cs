@@ -1,16 +1,51 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
-    [FilePath("UserSettings/StandingSilhouetteSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    public sealed class StandingSilhouetteSettings : ScriptableSingleton<StandingSilhouetteSettings>
+    public sealed class StandingSilhouetteSettings : ScriptableObject
     {
+        private const string PREFS_KEY = "LOYAL.Editor.StandingSilhouetteSettings";
+
+        private static StandingSilhouetteSettings s_Instance;
+        public static StandingSilhouetteSettings instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = CreateInstance<StandingSilhouetteSettings>();
+                    s_Instance.hideFlags = HideFlags.DontSave;
+                    s_Instance.Load();
+                }
+                return s_Instance;
+            }
+        }
+
         public Color wireColor = new Color(0.20f, 0.85f, 1.00f, 0.90f);
         public bool useSeparateFillColor = true;
         public Color fillColor = new Color(0.20f, 0.85f, 1.00f, 0.18f);
 
-        public void Save() => Save(true);
+        public void Load()
+        {
+            var json = EditorPrefs.GetString(PREFS_KEY, string.Empty);
+            if (!string.IsNullOrEmpty(json))
+            {
+                var oldFlags = hideFlags;
+                hideFlags = HideFlags.None;
+                EditorJsonUtility.FromJsonOverwrite(json, this);
+                hideFlags = oldFlags;
+            }
+        }
+
+        public void Save()
+        {
+            var oldFlags = hideFlags;
+            hideFlags = HideFlags.None;
+            var json = EditorJsonUtility.ToJson(this);
+            hideFlags = oldFlags;
+            EditorPrefs.SetString(PREFS_KEY, json);
+        }
     }
 
     public sealed class StandingSilhouetteModule : IPlayerSilhouetteModule

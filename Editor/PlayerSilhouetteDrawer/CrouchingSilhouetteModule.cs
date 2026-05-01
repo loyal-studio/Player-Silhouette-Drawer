@@ -1,11 +1,27 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
-    [FilePath("UserSettings/CrouchingSilhouetteSettings.asset", FilePathAttribute.Location.ProjectFolder)]
-    public sealed class CrouchingSilhouetteSettings : ScriptableSingleton<CrouchingSilhouetteSettings>
+    public sealed class CrouchingSilhouetteSettings : ScriptableObject
     {
+        private const string PREFS_KEY = "LOYAL.Editor.CrouchingSilhouetteSettings";
+
+        private static CrouchingSilhouetteSettings s_Instance;
+        public static CrouchingSilhouetteSettings instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = CreateInstance<CrouchingSilhouetteSettings>();
+                    s_Instance.hideFlags = HideFlags.DontSave;
+                    s_Instance.Load();
+                }
+                return s_Instance;
+            }
+        }
+
         public bool renderCrouch = true;
         [Range(0.30f, 0.90f)]
         public float crouchRatio = 0.53f;
@@ -13,7 +29,26 @@ namespace Daisen.Editor
         public bool useSeparateFillColor = true;
         public Color fillColor = new Color(1.00f, 0.75f, 0.20f, 0.18f);
 
-        public void Save() => Save(true);
+        public void Load()
+        {
+            var json = EditorPrefs.GetString(PREFS_KEY, string.Empty);
+            if (!string.IsNullOrEmpty(json))
+            {
+                var oldFlags = hideFlags;
+                hideFlags = HideFlags.None;
+                EditorJsonUtility.FromJsonOverwrite(json, this);
+                hideFlags = oldFlags;
+            }
+        }
+
+        public void Save()
+        {
+            var oldFlags = hideFlags;
+            hideFlags = HideFlags.None;
+            var json = EditorJsonUtility.ToJson(this);
+            hideFlags = oldFlags;
+            EditorPrefs.SetString(PREFS_KEY, json);
+        }
     }
 
     public sealed class CrouchingSilhouetteModule : IPlayerSilhouetteModule

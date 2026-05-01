@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Daisen.Editor
+namespace LOYAL.Editor
 {
     public struct PlayerSilhouetteTarget
     {
